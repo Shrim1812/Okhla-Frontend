@@ -12,7 +12,7 @@ const VerifyOTP = () => {
             return;
         }
         try {
-            const res = await axios.post("http://localhost:5000/Ohkla/verify-otp", {
+            const res = await axios.post("https://okhla-backend.onrender.com/Ohkla/verify-otp", {
                 email,
                 otp
             });
