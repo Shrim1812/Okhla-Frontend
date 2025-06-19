@@ -11,7 +11,7 @@ const YearlySummary = () => {
 
     const fetchSummary = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/Ohkla/getYearlySummary');
+            const res = await axios.get('https://okhla-backend.onrender.com/Ohkla/getYearlySummary');
             setSummaryData(res.data);
             setLoading(false);
         } catch (err) {
