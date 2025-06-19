@@ -31,7 +31,7 @@ function PaymentForm() {
 
     const fetchRegistrationFees = async (companyId) => {
         try {
-            const response = await fetch(`http://localhost:5000/Ohkla/getRegistrationFee/${companyId}`, {
+            const response = await fetch(`https://okhla-backend.onrender.com/Ohkla/getRegistrationFee/${companyId}`, {
                 method: 'GET',
             });
             const data = await response.json();
@@ -50,11 +50,11 @@ function PaymentForm() {
 
 
     useEffect(() => {
-        axios.get("http://localhost:5000/Ohkla/getCompany")
+        axios.get("https://okhla-backend.onrender.com/Ohkla/getCompany")
             .then((res) => setCompanies(res.data))
             .catch((err) => console.error("Error fetching companies:", err));
 
-        axios.get("http://localhost:5000/Ohkla/getYear")
+        axios.get("https://okhla-backend.onrender.com/Ohkla/getYear")
             .then((res) => {
                 const yearsFromAPI = res.data.map((item) => item.YearRange);
                 setYears(yearsFromAPI);
@@ -91,7 +91,7 @@ function PaymentForm() {
 
             if (paymentType === "Annual") {
                 const { data } = await axios.get(
-                    `http://localhost:5000/Ohkla/getMemberAndPaymentSummaryById/${selectedId}/${selectedYear}`
+                    `https://okhla-backend.onrender.com/Ohkla/getMemberAndPaymentSummaryById/${selectedId}/${selectedYear}`
                 );
 
                 if (data && Object.keys(data).length > 0) {
@@ -101,7 +101,7 @@ function PaymentForm() {
                     setDueAmount(String(data.DueAmount ?? "0"));
                     setIsNewTotalAmountEditable(false);
                 } else {
-                    const resMember = await axios.get(`http://localhost:5000/Ohkla/getMemberById/${selectedId}`);
+                    const resMember = await axios.get(`https://okhla-backend.onrender.com/Ohkla/getMemberById/${selectedId}`);
                     const memData = resMember.data || {};
                     setMember(memData);
 
@@ -113,7 +113,7 @@ function PaymentForm() {
                 }
             } else {
                 // For Registration or Other
-                const resMember = await axios.get(`http://localhost:5000/Ohkla/getMemberById/${selectedId}`);
+                const resMember = await axios.get(`https://okhla-backend.onrender.com/Ohkla/getMemberById/${selectedId}`);
                 const memData = resMember.data || {};
                 console.log(memData.Category);
                 // if(memData.Category != ""){
@@ -221,7 +221,7 @@ function PaymentForm() {
         try {
             if (paymentType === "Annual") {
                 // ✅ Send to YearlyPaymentSummary
-                await axios.post("http://localhost:5000/Ohkla/addPayment", {
+                await axios.post("https://okhla-backend.onrender.com/Ohkla/addPayment", {
                     MembershipID: parseInt(selectedId),
                     PaymentYear: selectedYear,
                     AmountPaid: updatedPaid,
@@ -250,7 +250,7 @@ function PaymentForm() {
                     PaymentYear: paymentType === "Annual" ? selectedYear : null,
                 };
                 console.log(receiptPayload);
-                const receiptRes = await axios.post("http://localhost:5000/Ohkla/ReceiptOfPayment", receiptPayload);
+                const receiptRes = await axios.post("https://okhla-backend.onrender.com/Ohkla/ReceiptOfPayment", receiptPayload);
                 console.log("✅ Receipt added:", receiptRes.data);
 
                 alert("Receipt added successfully!");
@@ -263,7 +263,7 @@ function PaymentForm() {
                     };
                     console.log("Sending PUT:", payload);
 
-                    const response = await axios.put("http://localhost:5000/Ohkla/updateAnnualPayment", payload);
+                    const response = await axios.put("https://okhla-backend.onrender.com/Ohkla/updateAnnualPayment", payload);
                     console.log("Response:", response.data);
                     alert("Annual payment updated successfully!");
 
@@ -273,7 +273,7 @@ function PaymentForm() {
                 }
             } else {
                 // ✅ Send to ExtraDetail
-                const response = await axios.post("http://localhost:5000/Ohkla/ExtraDetail", {
+                const response = await axios.post("https://okhla-backend.onrender.com/Ohkla/ExtraDetail", {
                     MembershipID: parseInt(selectedId),
                     CompanyName: companyName,
                     PaymentYear: selectedYear,
@@ -308,7 +308,7 @@ function PaymentForm() {
 
                 console.log(receiptPayload);
 
-                const receiptRes = await axios.post("http://localhost:5000/Ohkla/ReceiptOfPayment", receiptPayload);
+                const receiptRes = await axios.post("https://okhla-backend.onrender.com/Ohkla/ReceiptOfPayment", receiptPayload);
                 console.log("✅ Receipt added:", receiptRes.data);
 
 
@@ -330,202 +330,6 @@ function PaymentForm() {
             alert("❌ Failed to save payment details. Please try again.");
         }
     };
-
-    
-
-//   return (
-//     <div style={{ display: 'flex' }}>
-//       {/* Sidebar */}
-//       <div style={{ width: '200px' }}>
-//         {/* Sidebar content here */}
-//       </div>
-
-//       {/* Main Content */}
-//       <div style={{ flex: 1, padding: '0' }}>
-//         <div className="card shadow mt-0 p-1" style={{ width: '100%', height: '700px', margin: '0', padding: '0' }}>
-//           <div className="card-header text-white p-2" style={{ backgroundColor: '#173a60', margin: '0', borderBottom: '1px solid #ccc' }}>
-//             <h4 className="mb-0 text-center">➕ Add Payments Details</h4>
-//           </div>
-
-//           {/* Top Filters */}
-//           <div className="row align-items-end mb-3 gx-2">
-//             <InputSelect
-//               label={<>Payment Type <span className="star">*</span></>}
-//               className="custom-input"
-//               value={paymentType}
-//               onChange={(e) => setPaymentType(e.target.value)}
-//               options={["", "Annual", "Registration", "Other"]}
-//             />
-
-//             <div className="col-md-6 mb-3">
-//               <label className="form-label">Company Name <span className="star">*</span></label>
-//               <select className="form-select custom-input" value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
-//                 <option value="">Select</option>
-//                 {companies.map((comp) => (
-//                   <option key={comp.MembershipID} value={comp.MembershipID}>{comp.CompanyName}</option>
-//                 ))}
-//               </select>
-//             </div>
-
-//             {paymentType !== "Registration" && paymentType !== "Other" && (
-//               <div className="col-md-3">
-//                 <label className="form-label">Payment Year <span className="star">*</span></label>
-//                 <select className="form-select custom-input" value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-//                   <option value="">Select Year</option>
-//                   {years.map((y, i) => (
-//                     <option key={i} value={y}>{y}</option>
-//                   ))}
-//                 </select>
-//               </div>
-//             )}
-
-//   <div className="col-auto d-grid my-2" style={{ width: "80px" }}>
-//   <button
-//     onClick={fetchMember}
-//     className="btn btn-primary btn-sm"
-//     disabled={isLoadingData}
-//     style={{ padding: "4px 8px", fontSize: "0.8rem" }}
-//   >
-//     {isLoadingData ? "Loading..." : "Search"}
-//   </button>
-// </div>
-//   </div>
-
-//           <hr />
-
-//           {/* Member Details */}
-//           <div className="row g-3">
-//             <InputField label="Member ID" className="custom-input" value={member.MembershipID || ""} readOnly />
-//             <InputField label="Company Name" className="custom-input" value={member.CompanyName || ""} readOnly />
-//             <InputField label="Member Name" className="custom-input" value={member.MemberName || ""} readOnly />
-//             <InputField label="Email" className="custom-input" value={member.Email || ""} readOnly />
-//             <InputField label="Member Since" className="custom-input" value={member.MemberSince || ""} readOnly />
-//             <InputField label="Contact No." className="custom-input" value={member.ContactNumber || ""} readOnly />
-
-//             {paymentType === "Annual" && (
-//               <>
-//                 <InputField
-//                   label="Total Amount"
-//                   type="number"
-//                   className="custom-input"
-//                   value={totalAmount}
-//                   readOnly={!isNewTotalAmountEditable}
-//                   onChange={isNewTotalAmountEditable ? handleTotalAmountChange : undefined}
-//                 />
-//                 <InputField label="Amount Paid" className="custom-input" type="number" value={amountPaid} readOnly />
-//                 <InputField label="Due Amount" className="custom-input" type="number" value={dueAmount} readOnly />
-//               </>
-//             )}
-
-//             <InputSelect
-//               label={<>Payment Mode <span className="star">*</span></>}
-//               className="custom-input"
-//               value={paymentMode}
-//               onChange={(e) => setPaymentMode(e.target.value)}
-//               options={["", "UPI", "Online", "Cash", "Cheque"]}
-//             />
-
-//             <InputField label="Receipt No." className="custom-input" value={receiptNo} readOnly />
-
-//             {paymentMode === "Cheque" && (
-//               <>
-//                 <InputField label="Cheque No." className="custom-input" value={chequeNo} onChange={(e) => setChequeNo(e.target.value)} />
-//                 <InputField label="Cheque Receive On" className="custom-input" type="date" value={chequeDate} onChange={(e) => setChequeDate(e.target.value)} />
-//                 <InputField label="Bank" className="custom-input" value={bankName} onChange={(e) => setBankName(e.target.value)} />
-//               </>
-//             )}
-
-//             {paymentType === "Other" && (
-//               <InputField
-//                 label={<>Other Charge <span className="star">*</span></>}
-//                 type="number"
-//                 className="custom-input"
-//                 value={otherCharge}
-//                 onChange={(e) => setOtherCharge(Number(e.target.value))}
-//               />
-//             )}
-
-//             {paymentType === "Registration" && (
-//               <InputField
-//                 label={<>Registration Amount <span className="star">*</span></>}
-//                 type="number"
-//                 className="custom-input"
-//                 value={registrationFees}
-//                 onChange={(e) => setRegistrationAmount(Number(e.target.value))}
-//               />
-//             )}
-
-//             {paymentType === "Annual" && (
-//               <div className="col-md-6 mb-3">
-//                 <label className="form-label fw-bold">Payable <span className="star">*</span></label>
-//                 <input
-//                   type="number"
-//                   className="form-control custom-input"
-//                   value={newPayment}
-//                   onChange={(e) => handleNewPaymentChange(e.target.value)}
-//                   required
-//                 />
-//               </div>
-//             )}
-
-//             {paymentType !== "Annual" && (
-//               <InputField
-//                 label={<>Remark <span className="star">*</span></>}
-//                 className="custom-input"
-//                 value={remark}
-//                 onChange={(e) => setRemark(e.target.value)}
-//               />
-//             )}
-//           </div>
-
-//           {/* Save Button */}
-//          <div className="mt-4 text-end">
-//   <button
-//     onClick={handleSave}
-//     className="btn btn-success btn-sm"
-//     disabled={isLoadingData}
-//     style={{ padding: "4px 8px", fontSize: "0.8rem", minWidth: "80px" }}
-//   >
-//     {isLoadingData ? "Saving..." : "Save"}
-//   </button>
-// </div>
-
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// // ✅ InputField Component
-// function InputField({ label, value, onChange, readOnly = false, type = "text", className = "" }) {
-//   return (
-//     <div className="col-md-6 mb-3">
-//       <label className="form-label">{label}</label>
-//       <input
-//         type={type}
-//         className={`form-control ${className}`}
-//         value={value}
-//         onChange={onChange}
-//         readOnly={readOnly}
-//       />
-//     </div>
-//   );
-// }
-
-// // ✅ InputSelect Component
-// function InputSelect({ label, value, onChange, options, className = "" }) {
-//   return (
-//     <div className="col-md-6 mb-3">
-//       <label className="form-label">{label}</label>
-//       <select className={`form-select ${className}`} value={value} onChange={onChange}>
-//         {options.map((opt, i) => (
-//           <option key={i} value={opt}>
-//             {opt === "" ? "Select" : opt}
-//           </option>
-//         ))}
-//       </select>
-//     </div>
-//   );
 
 return (
   <div style={{ display: 'flex' }}>
