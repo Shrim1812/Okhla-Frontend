@@ -18,7 +18,7 @@ const PaymentReceiptTable = () => {
 
     useEffect(() => {
         axios
-            .get('http://localhost:5000/Ohkla/getReceiptOfPayment')
+            .get('https://okhla-backend.onrender.com/Ohkla/getReceiptOfPayment')
             .then((res) => setReceipts(res.data))
             .catch((err) => console.error('Error fetching receipts', err));
     }, []);
@@ -51,7 +51,7 @@ const PaymentReceiptTable = () => {
   if (selectedReceipt) {
     const receiptNo = selectedReceipt.ReceiptNumber;
     window.open(
-      `http://localhost:5000/Ohkla/report/receipt?receiptNo=${receiptNo}`,
+      `https://okhla-backend.onrender.com/Ohkla/report/receipt?receiptNo=${receiptNo}`,
       '_blank'
     );
   } else {
