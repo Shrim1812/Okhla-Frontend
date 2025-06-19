@@ -1,58 +1,3 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-
-// const CreateUserForm = () => {
-//     const [formData, setFormData] = useState({
-//         name: "",
-//         email: "",
-//         password: "",
-//         role: "user",
-//     });
-//     const [message, setMessage] = useState("");
-
-//     useEffect(() => {
-//         const role = localStorage.getItem("role");
-//         if (role !== "admin") {
-//             window.location.href = "/";
-//         }
-//     }, []);
-
-//     const handleChange = (e) => {
-//         setFormData({ ...formData, [e.target.name]: e.target.value });
-//     };
-
-//     const handleCreate = async (e) => {
-//         e.preventDefault();
-//         try {
-//             const res = await axios.post("http://localhost:5000/Ohkla/createUser", formData);
-//             setMessage(res.data.message);
-//         } catch (err) {
-//             setMessage(err.response?.data?.message || "Something went wrong");
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <h2>Create New User</h2>
-//             <form onSubmit={handleCreate}>
-//                 <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
-//                 <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-//                 <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-//                 <select name="role" onChange={handleChange}>
-//                     <option value="user">User</option>
-//                     <option value="admin">Admin</option>
-//                 </select>
-//                 <button type="submit">Create</button>
-//             </form>
-//             {message && <p>{message}</p>}
-//         </div>
-//     );
-// };
-
-// export default CreateUserForm;
-
-
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -82,7 +27,7 @@ const CreateUserForm = () => {
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:5000/Ohkla/createUser", formData);
+            const res = await axios.post("https://okhla-backend.onrender.com/Ohkla/createUser", formData);
             setMessage(res.data.message);
             setAlertType("success");
             setFormData({
