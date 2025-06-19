@@ -41,7 +41,7 @@ const MemberForm = () => {
  useEffect(() => {
   const fetchYears = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/Ohkla/getYearRange');
+      const res = await axios.get('https://okhla-backend.onrender.com/Ohkla/getYearRange');
       if (res.data.years && res.data.years.length > 0) {
         setYears(res.data.years);
         setSelectedYear(res.data.years[0]); // default latest year
@@ -119,7 +119,7 @@ const MemberForm = () => {
         if (!validate()) return;
 
         try {
-            const yearRes = await axios.get('http://localhost:5000/Ohkla/getYearRange');
+            const yearRes = await axios.get('https://okhla-backend.onrender.com/Ohkla/getYearRange');
             const years = yearRes.data.years;
 
             if (!years || years.length === 0) {
@@ -129,7 +129,7 @@ const MemberForm = () => {
 
             const latestYear = years[0];
             console.log("📅 Inserting AnnualPayment for Year:", latestYear);
-            const paymentResponse = await axios.post('http://localhost:5000/Ohkla/insertAnnualPayments', formData);
+            const paymentResponse = await axios.post('https://okhla-backend.onrender.com/Ohkla/insertAnnualPayments', formData);
 
             alert(paymentResponse.data.message);
 
@@ -375,218 +375,3 @@ const MemberForm = () => {
 
 export default MemberForm;
 
-
-// File: MemberForm.js
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import Select from 'react-select';
-// import './MemberForm.css';
-
-// const MemberForm = () => {
-//     const [formData, setFormData] = useState({
-//         MemberName: '',
-//         CompanyName: '',
-//         ContactNumber: '',
-//         Email: '',
-//         GSTNo: '',
-//         UdhyamAadhar: '',
-//         RegistrationDate: '',
-//         MemberSince: '',
-//         Address1: '',
-//         Address2: '',
-//         Area: '',
-//         City: '',
-//         State: '',
-//         IsActive: true,
-//         Owner: '',
-//         Category: '',
-//         PrinterCategory: []
-//     });
-
-//     const [errors, setErrors] = useState({});
-//     const [years, setYears] = useState([]);
-
-//     useEffect(() => {
-//         const fetchYears = async () => {
-//             try {
-//                 const res = await axios.get('http://localhost:5000/Ohkla/getYearRange');
-//                 if (res.data.years?.length > 0) {
-//                     setYears(res.data.years);
-//                 }
-//             } catch (error) {
-//                 console.error('Error fetching years:', error);
-//             }
-//         };
-//         fetchYears();
-//     }, []);
-
-//     const handleChange = (e) => {
-//         const { name, value, type, checked } = e.target;
-//         setFormData({
-//             ...formData,
-//             [name]: type === 'checkbox' ? checked : value
-//         });
-//     };
-
-//     const handlePrinterCategoryChange = (selectedOptions) => {
-//         const values = selectedOptions.map(option => option.value);
-//         setFormData({ ...formData, PrinterCategory: values });
-//     };
-
-//     const validate = () => {
-//         const tempErrors = {};
-
-//         if (!formData.MemberName.trim()) tempErrors.MemberName = "Member Name is required";
-//         if (!formData.CompanyName.trim()) tempErrors.CompanyName = "Company Name is required";
-//         if (!formData.ContactNumber.trim()) tempErrors.ContactNumber = "Contact Number is required";
-//         if (!formData.Email.trim()) tempErrors.Email = "Email is required";
-//         if (!formData.RegistrationDate) tempErrors.RegistrationDate = "Registration Date is required";
-//         if (!formData.State) tempErrors.State = "State is required";
-//         if (!formData.Category) tempErrors.Category = "Category is required";
-//         if (!formData.Owner.trim()) tempErrors.Owner = "Owner is required";
-
-//         if (!/^[0-9]{10}$/.test(formData.ContactNumber)) {
-//             tempErrors.ContactNumber = 'Contact number must be exactly 10 digits';
-//         }
-
-//         if (formData.Email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email)) {
-//             tempErrors.Email = 'Invalid email format';
-//         }
-
-//         if (formData.GSTNo && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/.test(formData.GSTNo)) {
-//             tempErrors.GSTNo = 'Invalid GST number format (e.g., 07ABCDE1234F1Z5)';
-//         }
-
-//         if (formData.UdhyamAadhar && !/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/.test(formData.UdhyamAadhar)) {
-//             tempErrors.UdhyamAadhar = 'Invalid Udyam Aadhaar format (e.g., UDYAM-DL-00-1234567)';
-//         }
-
-//         setErrors(tempErrors);
-//         return Object.keys(tempErrors).length === 0;
-//     };
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         if (!validate()) return;
-
-//         try {
-//             const res = await axios.post('http://localhost:5000/Ohkla/insertAnnualPayment', formData);
-//             alert(res.data.message);
-//             setFormData({
-//                 MemberName: '', CompanyName: '', ContactNumber: '', Email: '', GSTNo: '',
-//                 UdhyamAadhar: '', RegistrationDate: '', MemberSince: '', Address1: '', Address2: '',
-//                 Area: '', City: '', State: '', IsActive: true, Owner: '', Category: '', PrinterCategory: []
-//             });
-//             setErrors({});
-//         } catch (err) {
-//             console.error(err);
-//             alert('Error saving member');
-//         }
-//     };
-
-//     const printerCategoryOptions = [
-//         { value: 'Offset', label: 'Offset' },
-//         { value: 'Digital Printer', label: 'Digital Printer' },
-//         { value: 'Book Printer', label: 'Book Printer' },
-//         { value: 'Commercial Printer', label: 'Commercial Printer' },
-//         { value: 'Screen Printer', label: 'Screen Printer' }
-//     ];
-
-//     return (
-//         <div className="container">
-//             <div className="card shadow" style={{ maxWidth: '750px', marginLeft: '250px' }}>
-//                 <div className="card-header text-white" style={{ backgroundColor: '#173a60' }}>
-//                     <h3 className="text-center mb-0">👤➕ New Member Registration</h3>
-//                 </div>
-//                 <div className="card-body">
-//                     <form onSubmit={handleSubmit} autoComplete="off">
-//                         <div className="row">
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Member Name<span className="star">*</span></label>
-//                                 <input name="MemberName" className="form-control" value={formData.MemberName} onChange={handleChange} />
-//                                 {errors.MemberName && <div className="text-danger">{errors.MemberName}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Company Name<span className="star">*</span></label>
-//                                 <input name="CompanyName" className="form-control" value={formData.CompanyName} onChange={handleChange} />
-//                                 {errors.CompanyName && <div className="text-danger">{errors.CompanyName}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Contact Number<span className="star">*</span></label>
-//                                 <input name="ContactNumber" className={`form-control ${errors.ContactNumber ? 'is-invalid' : ''}`} value={formData.ContactNumber} onChange={handleChange} />
-//                                 {errors.ContactNumber && <div className="invalid-feedback">{errors.ContactNumber}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Email<span className="star">*</span></label>
-//                                 <input name="Email" className={`form-control ${errors.Email ? 'is-invalid' : ''}`} value={formData.Email} onChange={handleChange} />
-//                                 {errors.Email && <div className="invalid-feedback">{errors.Email}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>GST No</label>
-//                                 <input name="GSTNo" className={`form-control ${errors.GSTNo ? 'is-invalid' : ''}`} value={formData.GSTNo} onChange={handleChange} />
-//                                 {errors.GSTNo && <div className="invalid-feedback">{errors.GSTNo}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Udhyam Aadhar</label>
-//                                 <input name="UdhyamAadhar" className={`form-control ${errors.UdhyamAadhar ? 'is-invalid' : ''}`} value={formData.UdhyamAadhar} onChange={handleChange} />
-//                                 {errors.UdhyamAadhar && <div className="invalid-feedback">{errors.UdhyamAadhar}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Registration Date<span className="star">*</span></label>
-//                                 <input type="date" name="RegistrationDate" className="form-control" value={formData.RegistrationDate} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Member Since</label>
-//                                 <input name="MemberSince" className="form-control" value={formData.MemberSince} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Address Line 1</label>
-//                                 <input name="Address1" className="form-control" value={formData.Address1} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Address Line 2</label>
-//                                 <input name="Address2" className="form-control" value={formData.Address2} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-4 mb-3">
-//                                 <label>Area</label>
-//                                 <input name="Area" className="form-control" value={formData.Area} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-4 mb-3">
-//                                 <label>City</label>
-//                                 <input name="City" className="form-control" value={formData.City} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-4 mb-3">
-//                                 <label>State<span className="star">*</span></label>
-//                                 <input name="State" className="form-control" value={formData.State} onChange={handleChange} />
-//                                 {errors.State && <div className="text-danger">{errors.State}</div>}
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Owner<span className="star">*</span></label>
-//                                 <input name="Owner" className="form-control" value={formData.Owner} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-6 mb-3">
-//                                 <label>Category<span className="star">*</span></label>
-//                                 <input name="Category" className="form-control" value={formData.Category} onChange={handleChange} />
-//                             </div>
-//                             <div className="col-md-12 mb-3">
-//                                 <label>Printer Category</label>
-//                                 <Select
-//                                     isMulti
-//                                     options={printerCategoryOptions}
-//                                     onChange={handlePrinterCategoryChange}
-//                                     value={printerCategoryOptions.filter(option => formData.PrinterCategory.includes(option.value))}
-//                                 />
-//                             </div>
-//                         </div>
-//                         <div className="text-center">
-//                             <button type="submit" className="btn btn-primary">Submit</button>
-//                         </div>
-//                     </form>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default MemberForm;
