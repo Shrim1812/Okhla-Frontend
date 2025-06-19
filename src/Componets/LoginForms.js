@@ -143,7 +143,7 @@ const LoginForm = () => {
         setError("");
 
         try {
-            const res = await axios.post("http://localhost:5000/Ohkla/login", {
+            const res = await axios.post("https://okhla-backend.onrender.com/Ohkla/login", {
                 email,
                 password,
             });
@@ -171,10 +171,10 @@ const LoginForm = () => {
         }
 
         try {
-            const res = await axios.get(`http://localhost:5000/Ohkla/getRoleByEmail?Email=${email}`);
+            const res = await axios.get(`https://okhla-backend.onrender.com/Ohkla/getRoleByEmail?Email=${email}`);
             const { role } = res.data;
             if (role === "admin") {
-                await axios.post("http://localhost:5000/Ohkla/send-otp", { email });
+                await axios.post("https://okhla-backend.onrender.com/Ohkla/send-otp", { email });
                 localStorage.setItem("resetEmail", email);
                 navigate("/verify-otp");
             } else {
