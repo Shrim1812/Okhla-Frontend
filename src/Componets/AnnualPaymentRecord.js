@@ -16,7 +16,7 @@ const AnnualPaymentsTable = () => {
     }, []);
     const fetchAnnualPayments = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/Ohkla/getAnnualPayments');
+            const res = await axios.get('https://okhla-backend.onrender.com/Ohkla/getAnnualPayments');
             setPayments(res.data);
             setFilteredPayments(res.data);
         } catch (err) {
