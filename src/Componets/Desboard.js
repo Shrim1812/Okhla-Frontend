@@ -38,7 +38,7 @@ const DashboardUI = () => {
   const [allYearData, setAllYearData] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/Ohkla/companies')
+    fetch('https://okhla-backend.onrender.com/Ohkla/companies')
       .then(res => res.json())
       .then(data => setCompanies(data))
       .catch(err => console.error('Error fetching companies:', err));
