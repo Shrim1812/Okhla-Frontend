@@ -45,7 +45,7 @@ const YearlyPaymentForm = () => {
         }
 
         try {
-            const res = await axios.post('http://localhost:5000/Ohkla/addNewYearAndInsertForAllMember', {
+            const res = await axios.post('https://okhla-backend.onrender.com/Ohkla/addNewYearAndInsertForAllMember', {
                 yearRange,
                 payments: {
                     Printer: parseFloat(payments.Printer),
@@ -80,90 +80,6 @@ const YearlyPaymentForm = () => {
             setError('Failed to save yearly payments');
         }
     };
-
-//     return (
-//         <div className="d-flex justify-content-center bg-light py-5" style={{ minHeight: 'vh', marginLeft: '250px' }}>
-            
-
-//      <div className="card shadow p-5" style={{
-//     width: '90%',
-//     maxWidth: '1200px',
-//     borderRadius: '16px',
-//     marginLeft: 'auto',
-//     marginRight: 'auto',
-//     backgroundColor: 'white'
-// }}>
-//       <h1 className="text-center mb-4 fw-bold text-white"style={{ backgroundColor: '#173a60' }}>➕ Add Yearly Payment</h1>
-          
-
-//                 {message && <div className="alert alert-success text-center">{message}</div>}
-//                 {error && <div className="alert alert-danger text-center">{error}</div>}
-
-//                 <form onSubmit={handleSubmit}>
-//                     <div className="mb-4">
-//                         <label className="form-label fw-semibold">Year Range</label>
-//                         <input
-//                             type="text"
-//                             className="form-control"
-//                             placeholder="e.g. 2024-2025"
-//                             value={yearRange}
-//                             onChange={(e) => setYearRange(e.target.value)}
-//                             required
-//                         />
-//                     </div>
-
-//                     {['Printer', 'Provider', 'MachineDealer', 'Publisher'].map((category) => (
-//                         <div className="mb-3" key={category}>
-//                             <div className="row">
-//                                 <div className="col-12 fw-semibold mb-1">{category}</div>
-//                                 <div className="col-md-6">
-//                                     <input
-//                                         type="number"
-//                                         className="form-control"
-//                                         name={category}
-//                                         placeholder={`${category} Payment`}
-//                                         value={payments[category]}
-//                                         onChange={(e) => handleInputChange(e, 'payment')}
-//                                         min="0"
-//                                         step="0.01"
-//                                         required
-//                                     />
-//                                 </div>
-//                                 <div className="col-md-6">
-//                                     <input
-//                                         type="number"
-//                                         className="form-control"
-//                                         name={category}
-//                                         placeholder={`${category} Registration`}
-//                                         value={registrations[category]}
-//                                         onChange={(e) => handleInputChange(e, 'registration')}
-//                                         min="0"
-//                                         step="0.01"
-//                                         required
-//                                     />
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     ))}
-
-//                    <button
-//     type="submit"
-//     className="btn btn-primary w-100 fw-bold mt-3"
-//     style={{
-//         fontSize: '1.1rem',
-//         padding: '10px',
-//         borderRadius: '8px',
-//         boxShadow: '0 4px 8px rgba(18, 44, 72, 0.4)',
-//         transition: 'background-color 0.3s ease'
-//     }}
-// >
-//     Save Payments
-// </button>
-
-//                 </form>
-//             </div>
-//         </div>
-//     );
 
 return (
     <div
