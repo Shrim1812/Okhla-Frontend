@@ -119,7 +119,7 @@ const EditMemberForm = ({ memberData, onCancel, onUpdate }) => {
         }
 
         try {
-            await axios.put(`http://localhost:5000/Ohkla/updateMember/${formData.MembershipID}`, formData);
+            await axios.put(`https://okhla-backend.onrender.com/Ohkla/updateMember/${formData.MembershipID}`, formData);
             alert('Member updated successfully');
             onUpdate();
         } catch (error) {
