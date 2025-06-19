@@ -11,7 +11,7 @@ const ReceiptTable = () => {
 
     const fetchReceipts = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/Ohkla/getReceipts");
+            const res = await axios.get("https://okhla-backend.onrender.com/Ohkla/getReceipts");
             setReceipts(res.data);
         } catch (err) {
             console.error("❌ Error fetching receipts:", err.message);
