@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   FaTachometerAlt, FaUserPlus, FaMoneyCheckAlt, FaUsers, FaReceipt,
-  FaChartLine, FaPlusCircle, FaClipboardList
+  FaChartLine, FaPlusCircle, FaClipboardList, FaSignOutAlt
 } from 'react-icons/fa';
 import './Sidbar.css';
 
 function Sidbaar() {
   const [role, setRole] = useState('');
+  const navigate = useNavigate();								 
 
   useEffect(() => {
     const savedRole = localStorage.getItem('role');
     setRole(savedRole);
   }, []);
 
-  return (
+	 const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('role');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    navigate('/'); // Redirect to login
+  };	
+  
+return (
     <div
       className="sidebar text-white p-3"
       style={{
@@ -92,6 +101,16 @@ function Sidbaar() {
             </li>
           </>
         )}
+
+        <li>
+          <button
+            onClick={handleLogout}
+            className="btn btn-danger w-100 mt-3 d-flex align-items-center gap-2"
+            style={{ backgroundColor: '#c0392b', border: 'none' }}
+          >
+            <FaSignOutAlt /> Logout
+          </button>
+        </li>		 
       </ul>
     </div>
   );
