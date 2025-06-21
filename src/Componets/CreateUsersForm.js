@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Swal from 'sweetalert2';							   
+import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CreateUserForm = () => {
@@ -29,7 +29,7 @@ const CreateUserForm = () => {
         e.preventDefault();
         try {
             const res = await axios.post("https://okhla-backend.onrender.com/Ohkla/createUser", formData);
-			 Swal.fire({
+            Swal.fire({
                 icon: 'success',
                 title: 'User Created',
                 text: res.data.message,
@@ -42,17 +42,19 @@ const CreateUserForm = () => {
                 role: "user",
             });
         } catch (err) {
-			Swal.fire({
+            Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: err.response?.data?.message || "Something went wrong",
                 confirmButtonColor: '#dc3545'
             });
         }
-       return (
+    };
+
+    return (
         <div className="container-fluid d-flex align-items-center justify-content-center min-vh-100 bg-light">
             <div className="card w-100 shadow" style={{ maxWidth: '500px' }}>
-                <div className="card-header text-white text-center" style={{ backgroundColor: '#173a60' }}>											 
+                <div className="card-header text-white text-center" style={{ backgroundColor: '#173a60' }}>
                     <h4>Create New User</h4>
                 </div>
                 <div className="card-body">
@@ -110,7 +112,7 @@ const CreateUserForm = () => {
                                 onChange={handleChange}
                             >
                                 <option value="user">User</option>
-                                <option value="admin">admin</option>
+                                <option value="admin">Admin</option>
                             </select>
                         </div>
 
@@ -118,7 +120,7 @@ const CreateUserForm = () => {
                             <button type="submit" className="btn btn-success">
                                 Create User
                             </button>
-                        </div>						   
+                        </div>
                     </form>
                 </div>
             </div>
