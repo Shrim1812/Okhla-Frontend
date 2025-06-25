@@ -135,7 +135,7 @@ const DashboardUI = () => {
         }
 
         // Fetch other payments
-        fetch(`http://localhost:5000/Ohkla/other-payments?companyName=${company}`)
+        fetch(`https://okhla-backend.onrender.com/Ohkla/other-payments?companyName=${company}`)
           .then(res => res.json())
           .then(op => {
             setOtherPayments(Array.isArray(op) ? op : []);
