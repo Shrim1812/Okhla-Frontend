@@ -63,7 +63,7 @@ const UserManagementTable = () => {
 
     return (
  <div className="container" style={{ marginLeft: '190px', marginTop: '0' }}>
-           <div className="card-header text-white mb-3" style={{ backgroundColor: '#173a60',height: '50px' }}>
+           <div className="card-header text-white mb-3 d-flex align-items-center justify-content-center" style={{ backgroundColor: '#173a60',height: '50px' }}>
                <h3 className="text-center mb-0">👥 User Management</h3>     
        </div>
 
