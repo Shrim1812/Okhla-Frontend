@@ -1,13 +1,11 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import'./MemberForm.css';
+import './MemberForm.css';
 function PaymentForm() {
     const [companies, setCompanies] = useState([]);
     const [selectedId, setSelectedId] = useState("");
     const [selectedYear, setSelectedYear] = useState("");
     const [member, setMember] = useState({});
-
     const [totalAmount, setTotalAmount] = useState("");
     const [amountPaid, setAmountPaid] = useState("0");
     const [dueAmount, setDueAmount] = useState("0");
@@ -47,8 +45,6 @@ function PaymentForm() {
             setRegistrationFees('0'); // Fallback on error
         }
     };
-
-
     useEffect(() => {
         axios.get("https://okhla-backend.onrender.com/Ohkla/getCompany")
             .then((res) => setCompanies(res.data))
@@ -61,7 +57,8 @@ function PaymentForm() {
 
                //updated code of receiptCounter
                 const lastUsed = parseInt(localStorage.getItem("receiptCounter") || "100", 10); // default 100
-                const nextReceiptNo = lastUsed + 1;
+    
+	const nextReceiptNo = lastUsed + 1;
                 setReceiptNo(`RCE-${nextReceiptNo}`);
             })
             .catch((err) => console.error("Error fetching years:", err));
@@ -80,7 +77,19 @@ function PaymentForm() {
         }
     }, [selectedId, selectedYear, paymentType, companies]);
 
-
+const fetchRegistrationFees = async (companyId) => {
+        try {
+            const response = await axios.get(`https://okhla-backend.onrender.com/Ohkla/getRegistrationFee/${companyId}`);
+            if (response.data.success) {
+                setRegistrationFees(response.data.registrationFee);
+            } else {
+                setRegistrationFees('0');
+            }
+        } catch (error) {
+            console.error('Error fetching registration fees:', error);
+            setRegistrationFees('0');
+        }
+    };
     const fetchMember = async () => {
         if (!selectedId || !paymentType || (paymentType === "Annual" && !selectedYear)) {
             alert("⚠️ Please select Company, Payment Type, and Year (only for Annual).");
@@ -163,182 +172,113 @@ function PaymentForm() {
         setNewPayment(value);
         setDueAmount((total - (paid + newPay)).toFixed(2));
     };
-
-    const handleSave = async () => {
-        const newPay = parseFloat(newPayment) || 0;
-        const addPay = parseFloat(additionalPayable) || 0;
-        const paid = parseFloat(amountPaid) || 0;
-        const total = parseFloat(totalAmount) || 0;
-
-        const actualPaid = paymentType === "Annual" ? newPay : addPay;
-        const updatedPaid = paid + actualPaid;
-        const updatedDue = total - updatedPaid;
-
-
-       // for recipt
-       const current = parseInt(localStorage.getItem("receiptCounter") || "101", 10);
-        const nextCounter = current + 1;
-        localStorage.setItem("receiptCounter", nextCounter.toString());
-        setReceiptNo(`REC-${nextCounter}`);
-
-
-        // if (!selectedId || (actualPaid <= 0 && paymentType !== "Registration")) {
-        //     alert("⚠️ Please enter a valid payment amount.");
-        //     return;
-        // }
-
-        if (!selectedId) {
-            alert("⚠️ Please select a member.");
+	const handleSave = async () => {
+    if (!selectedId || !paymentMode) {
+        alert("⚠️ Please fill all required fields.");
+        return;
+    }
+    const newPay = parseFloat(newPayment) || 0;
+    const addPay = parseFloat(additionalPayable) || 0;
+    const paid = parseFloat(amountPaid) || 0;
+    const total = parseFloat(totalAmount) || 0;
+    const actualPaid = paymentType === "Annual" ? newPay : addPay;
+    const updatedPaid = paid + actualPaid;
+    const updatedDue = total - updatedPaid;
+    let actual = 0;
+    if (paymentType === "Registration") {
+        if (!registrationFees || registrationFees <= 0) {
+            alert("⚠️ Registration Fees must be greater than 0.");
+            return;
+        }				 
+        actual = registrationFees;
+    } else if (paymentType === "Other") {
+        if (!otherCharge || otherCharge <= 0) {
+            alert("⚠️ Please enter a valid Other Charge.");
             return;
         }
+        actual = otherCharge;
+    }
+ try {
+        const current = parseInt(localStorage.getItem("receiptCounter") || "100", 10);
+        const next = current + 1;
+        const newReceiptNo = `REC-${next}`;
+        setReceiptNo(`REC-${next + 1}`); // Next receiptNo pre-set
+        localStorage.setItem("receiptCounter", next.toString());
+		
+        if (paymentType === "Annual") {
+			
+            await axios.post("http://localhost:5000/Ohkla/addPayment", {
+                MembershipID: parseInt(selectedId),
+                PaymentYear: selectedYear,
+                AmountPaid: updatedPaid,
+                DueAmount: updatedDue,
+                TotalAmount: total,
+                ReceiptNumber: newReceiptNo,
+                ChequeNumber: chequeNo,
+                ChequeReceiveOn: chequeDate || null,
+                BankName: bankName,
+                PaymentType: paymentMode,
+                PaymentCategory: paymentType,
+                Remark: remark
+            });
 
-        if (paymentType === "Registration") {
-            if (!registrationFees || registrationFees <= 0) {
-                alert("⚠️ Registration Fees must be greater than 0.");
-                return;
-            }
-        } else if (paymentType === "Other") {
-            if (!otherCharge || otherCharge <= 0) {
-                alert("⚠️ Please enter a valid Other Charge.");
-                return;
-            }
+            await axios.post("http://localhost:5000/Ohkla/ReceiptOfPayment", {
+                ReceiptNumber: newReceiptNo,
+                ReceiptDate: new Date().toISOString().split('T')[0],
+                MembershipID: parseInt(selectedId),
+                ReceivedAmount: actualPaid,
+                PaymentMode: paymentMode,
+                PaymentType: paymentType,
+                ChequeNumber: chequeNo,
+                BankName: bankName,
+                PaymentYear: selectedYear
+            });
+
+            await axios.put("http://localhost:5000/Ohkla/updateAnnualPayment", {
+                MembershipID: parseInt(selectedId),
+                PaymentYear: selectedYear,
+                AmountPaid: updatedPaid
+            });
+
+            alert("✅ Annual payment saved successfully!");
+        } else {
+            await axios.post("http://localhost:5000/Ohkla/ExtraDetail", {
+                MembershipID: parseInt(selectedId),
+                CompanyName: companyName,
+                PaymentYear: selectedYear,
+                Amount: actual,
+                ReceiptNumber: newReceiptNo,
+                ChequeNumber: chequeNo,
+                ChequeReceiveOn: chequeDate || null,
+                BankName: bankName,
+                PaymentMode: paymentMode,
+                PaymentCategory: paymentType,
+                Remark: remark
+            });
+
+            await axios.post("http://localhost:5000/Ohkla/ReceiptOfPayment", {
+                ReceiptNumber: newReceiptNo,
+                ReceiptDate: new Date().toISOString().split('T')[0],
+                MembershipID: parseInt(selectedId),
+                ReceivedAmount: actual,
+                PaymentMode: paymentMode,
+                PaymentType: paymentType,
+                ChequeNumber: chequeNo,
+                BankName: bankName,
+                PaymentYear: selectedYear
+            });
+
+            alert("✅ Extra detail and receipt saved!");
         }
-
-        let actual = 0;
-
-        if (paymentType === "Registration") {
-            actual = registrationFees;
-        } else if (paymentType === "Other") {
-            actual = otherCharge;
-        }
-
-
-        if (!paymentMode) {
-            alert("Payment Mode is required!");
-            return;  // stop further processing
-        }
-
-        try {
-            if (paymentType === "Annual") {
-                // ✅ Send to YearlyPaymentSummary
-                await axios.post("https://okhla-backend.onrender.com/Ohkla/addPayment", {
-                    MembershipID: parseInt(selectedId),
-                    PaymentYear: selectedYear,
-                    AmountPaid: updatedPaid,
-                    DueAmount: updatedDue,
-                    TotalAmount: total,
-                    ReceiptNumber: receiptNo,
-                    ChequeNumber: chequeNo,
-                    ChequeReceiveOn: chequeDate || null,
-                    BankName: bankName,
-                    PaymentType: paymentMode,
-                    PaymentCategory: paymentType,
-                    Remark: remark
-                });
-
-                alert("✅ Payment details saved to YearlyPaymentSummary!");
-
-                const receiptPayload = {
-                    ReceiptNumber: receiptNo,
-                    ReceiptDate: new Date().toISOString().split('T')[0], // today's date in YYYY-MM-DD
-                    MembershipID: parseInt(selectedId),
-                    ReceivedAmount: actualPaid,
-                    PaymentMode: paymentMode,
-                    PaymentType: paymentType,
-                    ChequeNumber: chequeNo,
-                    BankName: bankName,
-                    PaymentYear: paymentType === "Annual" ? selectedYear : null,
-                };
-                console.log(receiptPayload);
-                const receiptRes = await axios.post("https://okhla-backend.onrender.com/Ohkla/ReceiptOfPayment", receiptPayload);
-                console.log("✅ Receipt added:", receiptRes.data);
-
-                alert("Receipt added successfully!");
-
-                try {
-                    const payload = {
-                        MembershipID: parseInt(selectedId),
-                        PaymentYear: selectedYear,
-                        AmountPaid: updatedPaid
-                    };
-                    console.log("Sending PUT:", payload);
-
-                    const response = await axios.put("https://okhla-backend.onrender.com/Ohkla/updateAnnualPayment", payload);
-                    console.log("Response:", response.data);
-                    alert("Annual payment updated successfully!");
-
-                } catch (error) {
-                    console.error("❌ PUT error:", error.response?.data || error.message);
-                    alert("Error while updating annual payment: " + (error.response?.data?.error || error.message));
-                }
-            } else {
-                // ✅ Send to ExtraDetail
-                const response = await axios.post("https://okhla-backend.onrender.com/Ohkla/ExtraDetail", {
-                    MembershipID: parseInt(selectedId),
-                    CompanyName: companyName,
-                    PaymentYear: selectedYear,
-                    // Amount: addPay,  // Correct key
-                    Amount: actual,
-                    ReceiptNumber: receiptNo,
-                    ChequeNumber: chequeNo,
-                    ChequeReceiveOn: chequeDate ? chequeDate : null,
-                    BankName: bankName,
-                    PaymentMode: paymentMode,
-                    PaymentCategory: paymentType,
-                    Remark: remark
-                });
-                console.log("Payment Type:", paymentType);
-                console.log("Registration Fees:", registrationFees);
-                console.log("Other Charge:", otherCharge);
-                console.log("Amount to send:", actual);
-
-                console.log(response);
-                alert("✅ Payment details saved to ExtraDetail!");
-                const receiptPayload = {
-                    ReceiptNumber: receiptNo,
-                    ReceiptDate: new Date().toISOString().split('T')[0],
-                    MembershipID: parseInt(selectedId),
-                    ReceivedAmount: actual, // ✅ Yeh sahi hai
-                    PaymentMode: paymentMode,
-                    PaymentType: paymentType,
-                    ChequeNumber: chequeNo,
-                    BankName: bankName,
-                    PaymentYear: null,
-                };
-
-                console.log(receiptPayload);
-
-                const receiptRes = await axios.post("https://okhla-backend.onrender.com/Ohkla/ReceiptOfPayment", receiptPayload);
-                console.log("✅ Receipt added:", receiptRes.data);
-
-
-                // ✅ Reset form values
-                setCompanyName("");
-                setAmountPaid(updatedPaid.toFixed(2));
-                setDueAmount(updatedDue.toFixed(2));
-                setNewPayment("");
-                // setReceiptNo(`REC-${Math.floor(100 + Math.random() * 900)}`);
-                setChequeNo("");
-                setChequeDate("");
-                setBankName("");
-                setPaymentMode("");
-                setAdditionalPayable("");
-                setRemark("");
-            }
-        } catch (err) {
-            console.error("❌ Error while saving payment:", err.response || err.message);
-            alert("❌ Failed to save payment details. Please try again.");
-        }
-    };
-
+    } catch (error) {
+        console.error("❌ Error saving payment:", error.response?.data || error.message);
+        alert("Error saving payment details.");
+    }
+};
 return (
   <div style={{ display: 'flex' }}>
-    {/* Sidebar */}
     <div style={{ width: '200px' }}>
-      {/* Sidebar content here */}
     </div>
-
-    {/* Main Content */}
     <div style={{ flex: 1, padding: '0' }}>
       <div
         className="card shadow mt-0 p-1"
@@ -354,85 +294,6 @@ return (
         >
           <h4 className="mb-0 text-center">➕ Add Payments Details</h4>
         </div>
-
-        {/* Top Filters */}
-        {/* <div
-          className="row align-items-end mb-3 gx-2"
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '10px',
-          }}
-        >
-          <InputSelect
-            label={
-              <>
-                Payment Type <span className="star">*</span>
-              </>
-            }
-            style={{ flex: '0 0 48%' }}
-            className="custom-input"
-            value={paymentType}
-            onChange={(e) => setPaymentType(e.target.value)}
-            options={['', 'Annual', 'Registration', 'Other']}
-          />
-
-          <div style={{ flex: '0 0 48%' }}>
-            <label className="form-label">
-              Company Name <span className="star">*</span>
-            </label>
-            <select
-              className="form-select custom-input"
-              value={selectedId}
-              onChange={(e) => setSelectedId(e.target.value)}
-              style={{ width: '100%', height: '38px' }}
-            >
-              <option value="">Select</option>
-              {companies.map((comp) => (
-                <option key={comp.MembershipID} value={comp.MembershipID}>
-                  {comp.CompanyName}
-                </option>
-              ))}
-            </select>
-          </div>
-<div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'flex-end' }}></div>
-          {paymentType !== 'Registration' && paymentType !== 'Other' && (
-            <div style={{ flex: '0 0 48%' }}>
-              <label className="form-label">
-                Payment Year <span className="star">*</span>
-              </label>
-              <select
-                className="form-select custom-input"
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                style={{ width: '100%', height: '38px' }}
-              >
-                <option value="">Select Year</option>
-                {years.map((y, i) => (
-                  <option key={i} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-<div style={{ flex: '0 0 15%' }}>
-
-            <button
-              onClick={fetchMember}
-              className="btn btn-primary btn-sm"
-              disabled={isLoadingData}
-              style={{
-                padding: '5px 6px',
-                fontSize: '0.8rem',
-                height: '35px',
-                width: '100%',
-              }}
-            >
-              {isLoadingData ? 'Loading...' : 'Search'}
-            </button>
-          </div>
-        </div> */}
 
 <div className="row align-items-end mb-3 gx-3">
                 <InputSelect
