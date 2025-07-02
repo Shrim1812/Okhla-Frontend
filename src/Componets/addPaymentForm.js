@@ -8,13 +8,15 @@ const YearlyPaymentForm = () => {
         Printer: '',
         Provider: '',
         MachineDealer: '',
-        Publisher: ''
+        Publisher: '',
+		PaperSupplier: ''				  
     });
     const [registrations, setRegistrations] = useState({
         Printer: '',
         Provider: '',
         MachineDealer: '',
-        Publisher: ''
+        Publisher: '',
+		PaperSupplier: ''
     });
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -51,29 +53,36 @@ const YearlyPaymentForm = () => {
                     Printer: parseFloat(payments.Printer),
                     Provider: parseFloat(payments.Provider),
                     MachineDealer: parseFloat(payments.MachineDealer),
-                    Publisher: parseFloat(payments.Publisher)
+                    Publisher: parseFloat(payments.Publisher),
+					PaperSupplier:parseFloat(payments.PaperSupplier)																 
                 },
                 registrations: {
                     Printer: parseFloat(registrations.Printer),
                     Provider: parseFloat(registrations.Provider),
                     MachineDealer: parseFloat(registrations.MachineDealer),
-                    Publisher: parseFloat(registrations.Publisher)
+                    Publisher: parseFloat(registrations.Publisher),
+					PaperSupplier:parseFloat(registrations.PaperSupplier)													 
                 }
             });
 
+			console.log(payments);
+            console.log(registrations);
+            console.log(res.data.message);					  						  
             setMessage(res.data.message || 'Data saved successfully');
             setYearRange('');
             setPayments({
                 Printer: '',
                 Provider: '',
                 MachineDealer: '',
-                Publisher: ''
+                Publisher: '',
+				PaperSupplier:''				
             });
             setRegistrations({
                 Printer: '',
                 Provider: '',
                 MachineDealer: '',
-                Publisher: ''
+                Publisher: '',
+				PaperSupplier:''				
             });
         } catch (error) {
             console.error('Error:', error);
@@ -133,7 +142,7 @@ return (
                         />
                     </div>
 
-                    {['Printer', 'Provider', 'MachineDealer', 'Publisher'].map((category) => (
+                    {['Printer', 'Provider', 'MachineDealer', 'Publisher','PaperSupplier'].map((category) => (
                         <div className="mb-2" key={category}>
                             <div className="row">
                                 <div className="col-12 fw-semibold mb-1 small">{category}</div>
