@@ -12,7 +12,9 @@ function Sidbaar() {
 
   useEffect(() => {
     const savedRole = localStorage.getItem('role');
-    setRole(savedRole);
+	 if (savedRole) {
+      setRole(savedRole);   // Convert to lowercase
+  }			  
   }, []);
 
 	 const handleLogout = () => {
