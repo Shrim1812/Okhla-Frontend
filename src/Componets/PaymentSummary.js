@@ -77,19 +77,6 @@ function PaymentForm() {
         }
     }, [selectedId, selectedYear, paymentType, companies]);
 
-const fetchRegistrationFees = async (companyId) => {
-        try {
-            const response = await axios.get(`https://okhla-backend.onrender.com/Ohkla/getRegistrationFee/${companyId}`);
-            if (response.data.success) {
-                setRegistrationFees(response.data.registrationFee);
-            } else {
-                setRegistrationFees('0');
-            }
-        } catch (error) {
-            console.error('Error fetching registration fees:', error);
-            setRegistrationFees('0');
-        }
-    };
     const fetchMember = async () => {
         if (!selectedId || !paymentType || (paymentType === "Annual" && !selectedYear)) {
             alert("⚠️ Please select Company, Payment Type, and Year (only for Annual).");
