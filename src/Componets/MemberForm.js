@@ -308,6 +308,7 @@ const MemberForm = () => {
                                     <option value="Provider">Provider</option>
                                     <option value="MachineDealer">MachineDealer</option>
                                     <option value="Publisher">Publisher</option>
+									<option value="PaperSupplier">PaperSupplier</option>													
                                 </select>
                             </div>
 
