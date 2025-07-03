@@ -56,7 +56,7 @@ function PaymentForm() {
                 setYears(yearsFromAPI);
 
                //updated code of receiptCounter
-                const lastUsed = parseInt(localStorage.getItem("receiptCounter") || "100", 10); // default 100
+                const lastUsed = parseInt(localStorage.getItem("receiptCounter") || "0", 10); // default 100
     
 	const nextReceiptNo = lastUsed + 1;
                 setReceiptNo(`RCE-${nextReceiptNo}`);
