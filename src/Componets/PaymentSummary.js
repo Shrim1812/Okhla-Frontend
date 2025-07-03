@@ -194,7 +194,7 @@ function PaymentForm() {
 		
         if (paymentType === "Annual") {
 			
-            await axios.post("http://localhost:5000/Ohkla/addPayment", {
+            await axios.post("https://okhla-backend.onrender.com/Ohkla/addPayment", {
                 MembershipID: parseInt(selectedId),
                 PaymentYear: selectedYear,
                 AmountPaid: updatedPaid,
@@ -209,7 +209,7 @@ function PaymentForm() {
                 Remark: remark
             });
 
-            await axios.post("http://localhost:5000/Ohkla/ReceiptOfPayment", {
+            await axios.post("https://okhla-backend.onrender.com/Ohkla/ReceiptOfPayment", {
                 ReceiptNumber: newReceiptNo,
                 ReceiptDate: new Date().toISOString().split('T')[0],
                 MembershipID: parseInt(selectedId),
@@ -221,7 +221,7 @@ function PaymentForm() {
                 PaymentYear: selectedYear
             });
 
-            await axios.put("http://localhost:5000/Ohkla/updateAnnualPayment", {
+            await axios.put("https://okhla-backend.onrender.com/Ohkla/updateAnnualPayment", {
                 MembershipID: parseInt(selectedId),
                 PaymentYear: selectedYear,
                 AmountPaid: updatedPaid
@@ -229,7 +229,7 @@ function PaymentForm() {
 
             alert("✅ Annual payment saved successfully!");
         } else {
-            await axios.post("http://localhost:5000/Ohkla/ExtraDetail", {
+            await axios.post("https://okhla-backend.onrender.com/Ohkla/ExtraDetail", {
                 MembershipID: parseInt(selectedId),
                 CompanyName: companyName,
                 PaymentYear: selectedYear,
@@ -243,7 +243,7 @@ function PaymentForm() {
                 Remark: remark
             });
 
-            await axios.post("http://localhost:5000/Ohkla/ReceiptOfPayment", {
+            await axios.post("https://okhla-backend.onrender.com/Ohkla/ReceiptOfPayment", {
                 ReceiptNumber: newReceiptNo,
                 ReceiptDate: new Date().toISOString().split('T')[0],
                 MembershipID: parseInt(selectedId),
