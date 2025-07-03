@@ -385,7 +385,12 @@ return (
 
           {paymentMode === 'Cheque' && (
             <>
-              <InputField label="Cheque No." className="custom-input" value={chequeNo} onChange={(e) => setChequeNo(e.target.value)} />
+             <InputField
+ 		label="Cheque No."
+		className="custom-input"
+  		value={chequeNo || ''}
+  		onChange={(e) => setChequeNo(e.target.value)}
+		/>
               <InputField
                 label="Cheque Receive On"
                 className="custom-input"
@@ -393,7 +398,12 @@ return (
                 value={chequeDate}
                 onChange={(e) => setChequeDate(e.target.value)}
               />
-              <InputField label="Bank" className="custom-input" value={bankName} onChange={(e) => setBankName(e.target.value)} />
+             <InputField
+      		label="Bank"
+      		className="custom-input"
+      		value={bankName || ''}
+      		onChange={(e) => setBankName(e.target.value)}
+   		 />
             </>
           )}
 
