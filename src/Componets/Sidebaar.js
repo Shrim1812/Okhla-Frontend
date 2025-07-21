@@ -76,8 +76,11 @@ return (
             <FaReceipt /> Payment Receipt
           </Link>
         </li>
-    
-
+		 <li>
+      <Link to="/OtherPayments" className="text-white d-flex align-items-center gap-2">
+        <FaMoneyCheckAlt /> Others Payments
+      </Link>
+    </li>
         {/* Admin-only Settings */}
         {role === 'admin' && (
           <>
