@@ -9,6 +9,9 @@ const CreateUserForm = () => {
         email: "",
         password: "",
         role: "user",
+		emailType: "",
+        senderEmail: "",
+        senderPassword: ""		  
     });
 
     const [message, setMessage] = useState("");
@@ -40,6 +43,9 @@ const CreateUserForm = () => {
                 email: "",
                 password: "",
                 role: "user",
+				emailType: "",
+                senderEmail: "",
+                senderPassword: ""
             });
         } catch (err) {
             Swal.fire({
@@ -114,6 +120,46 @@ const CreateUserForm = () => {
                                 <option value="user">User</option>
                                 <option value="admin">Admin</option>
                             </select>
+	</div>
+
+                        {/* ✅ NEW FIELDS */}
+                        <div className="mb-2">
+                            <label className="form-label">Email Type</label>
+                            <select
+                                name="emailType"
+                                className="form-select"
+                                value={formData.emailType}
+                                onChange={handleChange}
+                            >
+
+                                <option value="Google">Google</option>
+                                <option value="Microsoft">Microsoft</option>
+                            </select>
+                        </div>
+
+
+                        <div className="mb-2">
+                            <label className="form-label">Sender Email</label>
+                            <input
+                                type="email"
+                                name="senderEmail"
+                                className="form-control"
+                                placeholder="Sender's email address"
+                                value={formData.senderEmail}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="mb-2">
+                            <label className="form-label">Sender Password</label>
+                            <input
+                                type="password"
+                                name="senderPassword"
+                                className="form-control"
+                                placeholder="Sender's email password"
+                                value={formData.senderPassword}
+                                onChange={handleChange}
+                            />
                         </div>
 
                         <div className="d-grid">
