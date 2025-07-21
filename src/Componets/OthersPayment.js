@@ -7,7 +7,7 @@ const OtherPaymentsTable = () => {
 
   useEffect(() => {
     axios
-      .get("https://testingokhlabackend.onrender.com/Ohkla/getothersPayment")
+      .get("https://okhla-backend.onrender.com/Ohkla/getothersPayment")
       .then((res) => setPayments(res.data))
       .catch((err) => console.error(err));
   }, []);
