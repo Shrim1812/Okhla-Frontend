@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const PaymentReceiptTable = () => {
@@ -15,13 +16,19 @@ const PaymentReceiptTable = () => {
         BankName: '',
         PaymentYear: '',
     });
-
-    useEffect(() => {
-        axios
-            .get('https://okhla-backend.onrender.com/Ohkla/getReceiptOfPayment')
-            .then((res) => setReceipts(res.data))
-            .catch((err) => console.error('Error fetching receipts', err));
-    }, []);
+    const userId = localStorage.getItem("userId");
+console.log(userId)
+const username = localStorage.getItem("username");
+console.log(username)
+useEffect(() => {
+    axios
+        .get('https://testingokhlabackend.onrender.com/Ohkla/getReceiptOfPayment')
+        .then((res) => {
+            console.log("👉 Receipt Data:", res.data);  // 👈 Yahan se check karo ReceiptID aa raha ya nahi
+            setReceipts(res.data);
+        })
+        .catch((err) => console.error('❌ Error fetching receipts:', err));
+}, []);
 
     // Filter receipts based on all filters
     const filteredReceipts = receipts.filter((receipt) => {
@@ -51,20 +58,78 @@ const PaymentReceiptTable = () => {
   if (selectedReceipt) {
     const receiptNo = selectedReceipt.ReceiptNumber;
     window.open(
-      `https://okhla-backend.onrender.com/Ohkla/report/receipt?receiptNo=${receiptNo}`,
+      `https://testingokhlabackend.onrender.com/Ohkla/report/receipt?receiptNo=${receiptNo}`,
       '_blank'
     );
   } else {
     alert('Please select a receipt to print.');
   }
 };
+const handleSendTo = async () => {
+  if (!selectedReceipt) {
+    Swal.fire("Please select a receipt first");
+    return;
+  }
+
+  const receiptNumber = selectedReceipt.ReceiptNumber;
+  console.log(receiptNumber)
+  const receiptId = selectedReceipt.ReceiptID;
+   console.log(receiptId)
+  const userId = localStorage.getItem("userId");
+     console.log(userId)
+    
+
+  try {
+    const res = await axios.get(`https://testingokhlabackend.onrender.com/Ohkla/get-member-email/${receiptNumber}`);
+    const fetchedEmail = res.data?.email;
+
+    const { value: enteredEmail } = await Swal.fire({
+      title: "Send Receipt To",
+      input: "email",
+      inputLabel: "Member Email",
+      inputValue: fetchedEmail,
+      showCancelButton: true,
+      confirmButtonText: "Send Email",
+      inputValidator: (value) => {
+        if (!value) return "Email is required";
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return "Please enter a valid email";
+      },
+    });
+
+    if (!enteredEmail) return;
+
+    const sendRes = await axios.post("https://testingokhlabackend.onrender.com/Ohkla/send", {
+      receiptId,
+      userId,
+      toEmail: enteredEmail,
+    });
+
+    if (sendRes.data.success) {
+      Swal.fire("✅ Success", "Email sent successfully!", "success");
+    } else {
+      Swal.fire("❌ Error", sendRes.data.message || "Sending failed", "error");
+    }
+
+  } catch (err) {
+    console.error("❌ Send error:", err);
+    Swal.fire("❌ Error", "Something went wrong while sending the email.", "error");
+  }
+};
 
 
-     return (
+  return (
         <div className="container" style={{ marginLeft: '190px' }}>
             <div className="card shadow-sm rounded">
                 <div className="card-header text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: '#173a60' }}>
                     <h3 className="mb-0" style={{ textAlign: 'center', flex: 1 }}>🧾 Receipt Summary</h3>
+                    <button className="btn btn-primary" onClick={handleSendTo}>
+      📩 Send To
+    </button>
+                  
+
+
+
                     <button
                         className="btn btn-light btn-sm"
                         onClick={handlePrint}
