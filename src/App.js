@@ -20,7 +20,7 @@ import ForgotPassword from './Componets/ForgotPassword';
 import VerifyOTP from './Componets/VerifyOTP';
 import ResetPassword from './Componets/RestPassword';
 import UserManagementTable from './Componets/UserManagementTable';
-
+import OtherPayments from './Componets/OthersPayment';
 function AppWrapper() {
   const location = useLocation();
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -60,6 +60,7 @@ function AppWrapper() {
         <Route path="/Annual-payment" element={<AnnualPayment />} />
         <Route path="/Payment-Receipt" element={<Paymentreceipt />} />
         <Route path="/Yearl-List" element={<YearlyList />} />
+		<Route path="/OtherPayments" element={<OtherPayments />} />															
 
         {/* Admin-Only Routes */}
         {isAdmin ? (
